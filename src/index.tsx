@@ -15,7 +15,8 @@ import ImagesPage from "./imageList/imagePage";
 import { Provider as JotaiProvider } from "jotai";
 import RouteChangeHandler from "./common/routerHandler/RouteChangeHandler";
 import { SnackbarProvider } from "./common/snackBar/SnackbarProvider";
-import SignInSignUpPage from "./login/Login";
+import SignInSignUpPage from "./login/SignInSignUpPage";
+import AuthInterceptor from "./common/components/AuthInterceptor";
 
 const rootElement = document.getElementById("root");
 if (!rootElement) throw new Error("Failed to find the root element");
@@ -25,6 +26,7 @@ root.render(
   <React.StrictMode>
     <Router>
       <JotaiProvider>
+        <AuthInterceptor />
         <RouteChangeHandler />
         <SnackbarProvider>
           <Routes>
