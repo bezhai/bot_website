@@ -14,6 +14,8 @@ RUN npm run build
 FROM nginx:stable-alpine as production-stage
 # 从构建阶段复制构建结果到Nginx的服务目录
 COPY --from=build-stage /app/build /usr/share/nginx/html
+# 替换默认的Nginx配置文件
+COPY default.conf /etc/nginx/conf.d/default.conf
 # 为应用服务指定运行的端口
 EXPOSE 80
 # 启动Nginx服务
