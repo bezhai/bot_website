@@ -1,0 +1,49 @@
+// @import '../common/styles/theme';
+
+// .boxStyle {
+//   display: flex;
+//   gap: theme-spacing(3);
+//   margin-bottom: theme-spacing(4);
+//   flex-wrap: wrap;
+//   justify-content: center;
+//   background-color: $background-color;
+//   padding: theme-spacing(2);
+//   border-radius: theme-spacing($radius-rate);
+// }
+
+// .inputFieldStyle {
+//   min-width: 150px;
+//   max-width: 500px;
+//   flex-basis: 100%;
+//   @include breakpoint-up(sm) {
+//     flex-basis: auto;
+//   }
+//   .MuiOutlinedInput-root {
+//     border-radius: theme-spacing($radius-rate);
+//   }
+// }
+
+// .statusSelectStyle {
+//   min-width: 150px;
+//   flex-basis: 100%;
+//   @include breakpoint-up(sm) {
+//     flex-basis: auto;
+//   }
+//   .MuiOutlinedInput-root {
+//     border-radius: theme-spacing($radius-rate);
+//   }
+// }
+
+// .searchButtonStyle {
+//   background-color: $primary-color;
+//   &:hover {
+//     background-color: $primary-hover-color;
+//   }
+//   flex-basis: 100%;
+//   @include breakpoint-up(sm) {
+//     flex-basis: auto;
+//     width: auto;
+//   }
+//   min-width: 90px;
+//   border-radius: theme-spacing($radius-rate);
+// }

@@ -1,0 +1,16 @@
+$background-color: #fff; // 假设的背景颜色
+$primary-color: #7cbace; // 淡蓝色主题按钮
+$primary-hover-color: #97c7e4; // 淡蓝色主题按钮悬停颜色
+$radius-rate: 2.5; // 边框圆角比率
+$spacing-unit: 8px; // 基础间距单位
+
+@function theme-spacing($multiplier) {
+  @return $multiplier * $spacing-unit;
+}
+
+// 响应式断点混合
+@mixin breakpoint-up($breakpoint) {
+  @if $breakpoint == sm {
+    @media (min-width: 600px) { @content; }
+  }
+}
