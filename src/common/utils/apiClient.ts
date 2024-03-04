@@ -1,6 +1,6 @@
 import axios, { AxiosError } from 'axios';
 
-const API_URL = 'http://www.yuanzhi.xyz/api';
+const API_URL = 'https://www.yuanzhi.xyz/api';
 
 const apiClient = axios.create({
   baseURL: API_URL,
