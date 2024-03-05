@@ -1,6 +1,9 @@
 import axios, { AxiosError } from 'axios';
 
-const API_URL = 'https://www.yuanzhi.xyz/api';
+const LOCATION_ORIGIN = window.location.origin;
+const BASE_API_ORIGIN = "https://www.yuanzhi.xyz"
+
+const API_URL = (LOCATION_ORIGIN.indexOf("localhost") !== -1 ? BASE_API_ORIGIN : LOCATION_ORIGIN) + "/api"; // 允许http用户使用http请求而非https, 同时兼容本地测试
 
 const apiClient = axios.create({
   baseURL: API_URL,
