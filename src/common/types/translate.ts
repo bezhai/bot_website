@@ -16,7 +16,7 @@ export interface TranslateWithNum {
 }
 
 export interface UnTranslateData {
-  list: TranslateWithNum[];
+  data: TranslateWithNum[];
   total: number;
 }
 

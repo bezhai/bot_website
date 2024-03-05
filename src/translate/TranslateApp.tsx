@@ -51,7 +51,7 @@ function TranslationApp() {
         const resp_data = response.data.data;
         if (resp_data.total > 0) {
           setTranslations(
-            resp_data.list.map((item) => ({
+            resp_data.data.map((item) => ({
               word: {
                 origin: item.word.origin,
                 extra_info: {
@@ -59,11 +59,14 @@ function TranslationApp() {
                   en: item.word.extra_info?.en,
                 },
               },
-              translation: item.word.translation || "",
+              translation: item.word.translation || item.word.extra_info?.zh || item.word.extra_info?.en || "",
               num: item.num,
             }))
           );
           setTotalPages(Math.ceil(resp_data.total / page_size)); // 更新总页数
+        } else {
+          setTranslations([]);
+          setTotalPages(0);
         }
       }
     );
@@ -96,9 +99,9 @@ function TranslationApp() {
       if (response.data.code === 0) {
         // 更新未翻译的词列表
         fetchUntranslatedWords();
-        showMessage({message: "Translation submitted successfully!", severity: "success"});
+        showMessage({message: `成功提交[${word}]的翻译`, severity: "success"});
       } else {
-        showMessage({message: "Translation submitted fail!", severity: "error"});
+        showMessage({message: "翻译提交失败", severity: "error"});
       }
     });
   };

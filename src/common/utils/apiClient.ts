@@ -15,7 +15,6 @@ apiClient.interceptors.request.use(
     if (expireString !== null) {
       const expire = Number(expireString);
       if (new Date().getTime() >= expire && config.url?.indexOf('auth/refresh') === -1) {
-        // 需要思考下怎么刷新token
         apiClient.get('/auth/refresh').then((response) => {
           const expire = new Date(response.data.data.expire);
           localStorage.setItem('expire', expire.getTime().toString());

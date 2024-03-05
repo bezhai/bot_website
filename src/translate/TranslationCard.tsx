@@ -13,7 +13,7 @@ import { styled } from "@mui/material/styles";
 // 使用更具日式二次元风格的字体
 const animeFont = "'HarmonySans', sans-serif";
 const lightBlue = "#ADD8E6";
-const deepBlue = "#007BFF";
+const deepBlue = "#5F9FE4";
 
 // 自定义卡片风格，增加一些鲜艳的颜色和动漫感的阴影
 const StyledCard = styled(Card)(({ theme }) => ({
@@ -22,10 +22,10 @@ const StyledCard = styled(Card)(({ theme }) => ({
   borderRadius: "13px",
   backgroundColor: theme.palette.background.paper,
   transition: "transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out",
-  boxShadow: `0 4px 20px 0 ${deepBlue}`,
+  boxShadow: `0 3px 6px 0 ${deepBlue}`,
   "&:hover": {
     transform: "scale(1.005)", // 悬停时放大
-    boxShadow: `0 8px 40px 0 ${deepBlue}`,
+    boxShadow: `0 3px 6px 0 ${deepBlue}`,
   },
   fontFamily: animeFont,
 }));
@@ -153,6 +153,7 @@ const TranslationCard: React.FC<TranslationCardProps> = ({
             >
               <StyledButton
                 variant="contained"
+                disabled={word.translation === ""}
                 onClick={() => submitTranslation(word.word.origin, index)}
               >
                 提交翻译
