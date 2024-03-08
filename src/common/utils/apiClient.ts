@@ -1,76 +1,61 @@
-import axios, { AxiosError, AxiosRequestConfig } from 'axios';
+import axios, { AxiosError } from 'axios';
+import createAuthRefreshInterceptor from 'axios-auth-refresh';
+import { ResponseCode } from '../types/consts';
+import { ApiResponse } from '../types/basic';
 
 const LOCATION_ORIGIN = window.location.origin;
-const BASE_API_ORIGIN = "https://www.yuanzhi.xyz"
+const BASE_API_ORIGIN = 'http://www.yuanzhi.xyz';
 
-const API_URL = (LOCATION_ORIGIN.indexOf("localhost") !== -1 ? BASE_API_ORIGIN : LOCATION_ORIGIN) + "/api"; // 允许http用户使用http请求而非https, 同时兼容本地测试
+const API_URL =
+  (LOCATION_ORIGIN.indexOf('localhost') !== -1
+    ? BASE_API_ORIGIN
+    : LOCATION_ORIGIN) + '/api'; // 允许http用户使用http请求而非https, 同时兼容本地测试
 
 const apiClient = axios.create({
   baseURL: API_URL,
 });
 
-let isRefreshing = false;
-let subscribers: ((token: string) => void)[] = [];
+// 刷新 token 的逻辑
+const refreshAuthLogic = (failedRequest: any) =>
+  apiClient.get('/auth/refresh').then((tokenRefreshResponse) => {
+    const { token } = tokenRefreshResponse.data.data;
+    localStorage.setItem('token', token);
+    failedRequest.response.config.headers['Authorization'] = 'Bearer ' + token;
+    return Promise.resolve();
+  });
 
-function subscribeTokenRefresh(cb: (token: string) => void) {
-  subscribers.push(cb);
-}
+// 创建拦截器实例
+createAuthRefreshInterceptor(apiClient, refreshAuthLogic, {
+  shouldRefresh: (error: AxiosError) => {
+    const response = error.response?.data as ApiResponse;
+    return (
+      error.response?.status === 401 &&
+      response.code === ResponseCode.TOKEN_EXPIRE
+    );
+  },
+});
 
-function onRefreshed(token: string) {
-  subscribers.forEach(cb => cb(token));
-  subscribers = []; // 清空数组，以便下次刷新时重新收集订阅者
-}
-
+// 设置请求拦截器以确保每个请求都发送当前的 token
 apiClient.interceptors.request.use(
-  (config: AxiosRequestConfig) => {
-    const expireString = localStorage.getItem('expire');
+  (config) => {
     const token = localStorage.getItem('token');
-
-    if (expireString && token) {
-      const expire = Number(expireString);
-      const isExpired = new Date().getTime() >= expire;
-      const isAuthUrl = config.url?.includes('auth/refresh');
-
-      if (isExpired && !isAuthUrl) {
-        if (!isRefreshing) {
-          isRefreshing = true;
-          apiClient.get('/auth/refresh').then((response) => {
-            const { expire, token } = response.data.data;
-            localStorage.setItem('expire', new Date(expire).getTime().toString());
-            localStorage.setItem('token', token);
-            apiClient.defaults.headers.common.Authorization = `Bearer ${token}`;
-            isRefreshing = false;
-            onRefreshed(token);
-          }).catch((error) => {
-            isRefreshing = false;
-            console.error(error);
-          });
-        }
-
-        return new Promise<AxiosRequestConfig>((resolve, reject) => {
-          subscribeTokenRefresh(newToken => {
-            config.headers = config.headers || {};
-            config.headers.Authorization = `Bearer ${newToken}`;
-            resolve(config);
-          });
-        });
-      }
-    }
-
     if (token) {
       config.headers = config.headers || {};
       config.headers.Authorization = `Bearer ${token}`;
     }
-    return config as any;
+    return config;
   },
   (error: AxiosError) => {
     return Promise.reject(error);
   }
 );
 
+// 设置响应拦截器以处理鉴权失败的情况
 export function setupInterceptors(onUnauthorized: () => void): void {
   apiClient.interceptors.response.use(
-    (response) => response,
+    (response) => {
+      return response;
+    },
     (error: AxiosError) => {
       if (
         error.response &&
