@@ -1,4 +1,4 @@
-import axios, { AxiosError } from 'axios';
+import axios, { AxiosError, AxiosRequestConfig } from 'axios';
 
 const LOCATION_ORIGIN = window.location.origin;
 const BASE_API_ORIGIN = "https://www.yuanzhi.xyz"
@@ -9,28 +9,61 @@ const apiClient = axios.create({
   baseURL: API_URL,
 });
 
+let isRefreshing = false;
+let subscribers: ((token: string) => void)[] = [];
+
+function subscribeTokenRefresh(cb: (token: string) => void) {
+  subscribers.push(cb);
+}
+
+function onRefreshed(token: string) {
+  subscribers.forEach(cb => cb(token));
+  subscribers = []; // 清空数组，以便下次刷新时重新收集订阅者
+}
+
 apiClient.interceptors.request.use(
-  (config) => {
+  (config: AxiosRequestConfig) => {
     const expireString = localStorage.getItem('expire');
-    if (expireString !== null) {
+    const token = localStorage.getItem('token');
+
+    if (expireString && token) {
       const expire = Number(expireString);
-      if (new Date().getTime() >= expire && config.url?.indexOf('auth/refresh') === -1) {
-        apiClient.get('/auth/refresh').then((response) => {
-          const expire = new Date(response.data.data.expire);
-          localStorage.setItem('expire', expire.getTime().toString());
-          localStorage.setItem('token', response.data.data.token);
+      const isExpired = new Date().getTime() >= expire;
+      const isAuthUrl = config.url?.includes('auth/refresh');
+
+      if (isExpired && !isAuthUrl) {
+        if (!isRefreshing) {
+          isRefreshing = true;
+          apiClient.get('/auth/refresh').then((response) => {
+            const { expire, token } = response.data.data;
+            localStorage.setItem('expire', new Date(expire).getTime().toString());
+            localStorage.setItem('token', token);
+            apiClient.defaults.headers.common.Authorization = `Bearer ${token}`;
+            isRefreshing = false;
+            onRefreshed(token);
+          }).catch((error) => {
+            isRefreshing = false;
+            console.error(error);
+          });
+        }
+
+        return new Promise<AxiosRequestConfig>((resolve, reject) => {
+          subscribeTokenRefresh(newToken => {
+            config.headers = config.headers || {};
+            config.headers.Authorization = `Bearer ${newToken}`;
+            resolve(config);
+          });
         });
       }
     }
 
-    const token = localStorage.getItem('token');
-
-    if (token && config.url && (config.url.startsWith('/need-auth/') || config.url.startsWith('/auth/refresh'))) {
+    if (token) {
+      config.headers = config.headers || {};
       config.headers.Authorization = `Bearer ${token}`;
     }
-    return config;
+    return config as any;
   },
-  (error) => {
+  (error: AxiosError) => {
     return Promise.reject(error);
   }
 );
