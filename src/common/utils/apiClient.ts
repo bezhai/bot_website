@@ -26,10 +26,6 @@ export function setupRefreshInterceptor(onUnauthorized: () => void): void {
         failedRequest.response.config.headers['Authorization'] =
           'Bearer ' + token;
         return Promise.resolve();
-      })
-      .catch((error) => {
-        onUnauthorized();
-        return Promise.reject(error);
       });
   createAuthRefreshInterceptor(apiClient, refreshAuthLogic, {
     shouldRefresh: (error: AxiosError) => {
