@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { useAtom } from 'jotai';
 import { useNavigate } from 'react-router-dom';
-import { setupInterceptors } from '../utils/apiClient'; // 导入 apiClient
+import { setupInterceptors, setupRefreshInterceptor } from '../utils/apiClient'; // 导入 apiClient
 import { showMessageAtom } from '../snackBar/snackbarAtoms';
 
 const AuthInterceptor: React.FC = () => {
@@ -20,13 +20,15 @@ const AuthInterceptor: React.FC = () => {
   }, [showMessage]);
 
   useEffect(() => {
-    setupInterceptors(() => {
-        addFailCount();
-        setTimeout(() => {
-          navigate('/login');
-          setFailCount(() => 0);
-        }, 3000);
-      });
+    const onUnauthorized = () => {
+      addFailCount();
+      setTimeout(() => {
+        navigate('/login');
+        setFailCount(() => 0);
+      }, 3000);
+    };
+    setupInterceptors(onUnauthorized);
+    setupRefreshInterceptor(onUnauthorized);
 
   }, [navigate, addFailCount, failCount]);
 

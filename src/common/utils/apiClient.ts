@@ -15,25 +15,32 @@ const apiClient = axios.create({
   baseURL: API_URL,
 });
 
-// 刷新 token 的逻辑
-const refreshAuthLogic = (failedRequest: any) =>
-  apiClient.get('/auth/refresh').then((tokenRefreshResponse) => {
-    const { token } = tokenRefreshResponse.data.data;
-    localStorage.setItem('token', token);
-    failedRequest.response.config.headers['Authorization'] = 'Bearer ' + token;
-    return Promise.resolve();
-  });
-
 // 创建拦截器实例
-createAuthRefreshInterceptor(apiClient, refreshAuthLogic, {
-  shouldRefresh: (error: AxiosError) => {
-    const response = error.response?.data as ApiResponse;
-    return (
-      error.response?.status === 401 &&
-      response.code === ResponseCode.TOKEN_EXPIRE
-    );
-  },
-});
+export function setupRefreshInterceptor(onUnauthorized: () => void): void {
+  const refreshAuthLogic = (failedRequest: any) =>
+    apiClient
+      .get('/auth/refresh')
+      .then((tokenRefreshResponse) => {
+        const { token } = tokenRefreshResponse.data.data;
+        localStorage.setItem('token', token);
+        failedRequest.response.config.headers['Authorization'] =
+          'Bearer ' + token;
+        return Promise.resolve();
+      })
+      .catch((error) => {
+        onUnauthorized();
+        return Promise.reject(error);
+      });
+  createAuthRefreshInterceptor(apiClient, refreshAuthLogic, {
+    shouldRefresh: (error: AxiosError) => {
+      const response = error.response?.data as ApiResponse;
+      return (
+        error.response?.status === 401 &&
+        response.code === ResponseCode.TOKEN_EXPIRE
+      );
+    },
+  });
+}
 
 // 设置请求拦截器以确保每个请求都发送当前的 token
 apiClient.interceptors.request.use(
