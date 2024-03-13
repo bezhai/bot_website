@@ -22,8 +22,6 @@ const SignInForm: React.FC = () => {
       if (response.status === 200 && response.data.code === 0 && response.data.data !== undefined) {
         showMessage({ message: '登录成功', severity: 'success' });
         localStorage.setItem('token', response.data.data.token);
-        const expire = new Date(response.data.data.expire);
-        localStorage.setItem('expire', expire.getTime().toString())
         navigate('/');
       } else {
         setLoginError('登录失败，请检查用户名和密码是否正确');

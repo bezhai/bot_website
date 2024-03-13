@@ -3,16 +3,10 @@ import createAuthRefreshInterceptor from 'axios-auth-refresh';
 import { ResponseCode } from '../types/consts';
 import { ApiResponse } from '../types/basic';
 
-const LOCATION_ORIGIN = window.location.origin;
-const BASE_API_ORIGIN = 'http://www.yuanzhi.xyz';
-
-const API_URL =
-  (LOCATION_ORIGIN.indexOf('localhost') !== -1
-    ? BASE_API_ORIGIN
-    : LOCATION_ORIGIN) + '/api'; // 允许http用户使用http请求而非https, 同时兼容本地测试
+const BASE_API_ORIGIN = 'https://www.yuanzhi.xyz/api';
 
 const apiClient = axios.create({
-  baseURL: API_URL,
+  baseURL: BASE_API_ORIGIN,
 });
 
 // 创建拦截器实例
@@ -26,8 +20,8 @@ export function setupRefreshInterceptor(onUnauthorized: () => void): void {
         failedRequest.response.config.headers['Authorization'] =
           'Bearer ' + token;
         return Promise.resolve();
-      })
-      .catch((error) => {
+      }).catch((error) => {
+        // 如果刷新 token 失败，执行 onUnauthorized
         onUnauthorized();
         return Promise.reject(error);
       });
