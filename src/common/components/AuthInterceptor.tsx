@@ -27,8 +27,8 @@ const AuthInterceptor: React.FC = () => {
         setFailCount(() => 0);
       }, 3000);
     };
-    setupInterceptors(onUnauthorized);
     setupRefreshInterceptor(onUnauthorized);
+    setupInterceptors(onUnauthorized);
 
   }, [navigate, addFailCount, failCount]);
 
