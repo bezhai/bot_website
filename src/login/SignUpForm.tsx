@@ -72,7 +72,7 @@ const SignUpForm: React.FC<{ setTabIndex: (index: number) => void }> = ({
         type="password"
         value={password}
         onChange={(e) => setPassword(e.target.value)}
-        error={!!passwordError && !confirmPassword}
+        error={!!passwordError && confirmPassword !== ''}
         helperText={passwordError && !confirmPassword ? passwordError : ''}
       />
       <TextField
