@@ -11,20 +11,22 @@ const apiClient = axios.create({
 
 // 创建拦截器实例
 export function setupRefreshInterceptor(onUnauthorized: () => void): void {
-  const refreshAuthLogic = (failedRequest: any) =>
-    apiClient
-      .get('/auth/refresh')
+  const refreshAuthLogic = (failedRequest: any) => {
+    return axios
+      .get(`${BASE_API_ORIGIN}/auth/refresh`, {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+          // 你可以在这里添加更多的自定义头部
+        }
+      })
       .then((tokenRefreshResponse) => {
         const { token } = tokenRefreshResponse.data.data;
         localStorage.setItem('token', token);
         failedRequest.response.config.headers['Authorization'] =
           'Bearer ' + token;
         return Promise.resolve();
-      }).catch((error) => {
-        // 如果刷新 token 失败，执行 onUnauthorized
-        onUnauthorized();
-        return Promise.reject(error);
-      });
+      })
+  };
   createAuthRefreshInterceptor(apiClient, refreshAuthLogic, {
     shouldRefresh: (error: AxiosError) => {
       const response = error.response?.data as ApiResponse;

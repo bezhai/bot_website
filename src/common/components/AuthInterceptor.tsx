@@ -7,7 +7,7 @@ import { showMessageAtom } from '../snackBar/snackbarAtoms';
 const AuthInterceptor: React.FC = () => {
   const navigate = useNavigate();
   const [, showMessage] = useAtom(showMessageAtom);
-  const [failCount, setFailCount] = useState(0);
+  const [, setFailCount] = useState(0);
 
   const addFailCount = useCallback(() => {
     setFailCount((prevFailCount) => {
@@ -29,8 +29,7 @@ const AuthInterceptor: React.FC = () => {
     };
     setupRefreshInterceptor(onUnauthorized);
     setupInterceptors(onUnauthorized);
-
-  }, [navigate, addFailCount, failCount]);
+  }, [navigate, addFailCount]);
 
   return null;
 };
