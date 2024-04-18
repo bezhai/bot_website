@@ -14,6 +14,7 @@ export interface ListImageReq {
   tags?: string[];
   illust_id?: number;
   status?: StatusMode;
+  random_mode?: boolean;
 }
 
 export interface MultiTag {

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState } from 'react';
 import {
   Box,
   TextField,
@@ -10,8 +10,11 @@ import {
   InputLabel,
   SelectChangeEvent,
   useTheme,
-} from "@mui/material";
-import { StatusMode, ListImageReq } from "../common/types/image";
+  Grid,
+  Switch,
+  Typography,
+} from '@mui/material';
+import { StatusMode, ListImageReq } from '../common/types/image';
 
 const SearchComponent: React.FC<{
   onSearch: (filters: ListImageReq) => void;
@@ -22,11 +25,11 @@ const SearchComponent: React.FC<{
   const radiusRate = 2.5;
 
   const boxStyle = {
-    display: "flex",
+    display: 'flex',
     gap: 3,
     mb: 4,
-    flexWrap: "wrap",
-    justifyContent: "center",
+    flexWrap: 'wrap',
+    justifyContent: 'center',
     backgroundColor: theme.palette.background.paper,
     padding: theme.spacing(2),
     borderRadius: theme.spacing(radiusRate),
@@ -35,29 +38,29 @@ const SearchComponent: React.FC<{
   const inputFieldStyle = {
     minWidth: 150,
     maxWidth: 500,
-    flexBasis: { xs: "100%", sm: "auto" },
-    "& .MuiOutlinedInput-root": {
-        borderRadius: theme.spacing(radiusRate),
+    flexBasis: { xs: '100%', sm: 'auto' },
+    '& .MuiOutlinedInput-root': {
+      borderRadius: theme.spacing(radiusRate),
     },
   };
 
   const statusSelectStyle = {
     minWidth: 150,
-    flexBasis: { xs: "100%", sm: "auto" },
-    "& .MuiOutlinedInput-root": {
+    flexBasis: { xs: '100%', sm: 'auto' },
+    '& .MuiOutlinedInput-root': {
       borderRadius: theme.spacing(radiusRate),
     },
   };
 
   const searchButtonStyle = {
-    backgroundColor: "#7cbace", // 淡蓝色主题按钮
-    "&:hover": {
-      backgroundColor: "#97c7e4", // 淡蓝色主题按钮悬停颜色
+    backgroundColor: '#7cbace', // 淡蓝色主题按钮
+    '&:hover': {
+      backgroundColor: '#97c7e4', // 淡蓝色主题按钮悬停颜色
     },
-    flexBasis: "100%",
-    [theme.breakpoints.up("sm")]: {
-      flexBasis: "auto",
-      width: "auto",
+    flexBasis: '100%',
+    [theme.breakpoints.up('sm')]: {
+      flexBasis: 'auto',
+      width: 'auto',
     },
     minWidth: 90,
     borderRadius: theme.spacing(radiusRate),
@@ -99,13 +102,28 @@ const SearchComponent: React.FC<{
     }
   };
 
+  const handleCheckboxChange = (_event: React.ChangeEvent<HTMLInputElement>, checked: boolean) => {
+    setSearchParams({
+      ...searchParams,
+      random_mode: checked,
+    });
+  };
+
   return (
     <Box sx={boxStyle}>
+      <Typography component="div">
+        <Grid component="label" container alignItems="center" spacing={1}>
+          <Grid item>{searchParams.random_mode ? '开启随机' : '关闭随机'}</Grid>
+          <Grid item>
+            <Switch checked={searchParams.random_mode} onChange={handleCheckboxChange}/>
+          </Grid>
+        </Grid>
+      </Typography>
       <TextField
         name="author"
         label="作者名称"
         variant="outlined"
-        value={searchParams.author || ""}
+        value={searchParams.author || ''}
         onChange={handleInputChange}
         sx={inputFieldStyle}
       />
@@ -113,7 +131,7 @@ const SearchComponent: React.FC<{
         name="author_id"
         label="作者ID"
         variant="outlined"
-        value={searchParams.author_id || ""}
+        value={searchParams.author_id || ''}
         onChange={handleInputChange}
         sx={inputFieldStyle}
       />
@@ -121,7 +139,7 @@ const SearchComponent: React.FC<{
         name="illust_id"
         label="作品ID"
         variant="outlined"
-        value={searchParams.illust_id || ""}
+        value={searchParams.illust_id || ''}
         onChange={handleIllustIdChange}
         sx={inputFieldStyle}
       />
@@ -140,7 +158,7 @@ const SearchComponent: React.FC<{
       <FormControl variant="outlined" sx={statusSelectStyle}>
         <InputLabel>状态</InputLabel>
         <Select
-          value={searchParams.status ?? ""}
+          value={searchParams.status ?? ''}
           onChange={handleStatusChange}
           label="状态"
         >
