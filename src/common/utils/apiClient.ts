@@ -3,7 +3,7 @@ import createAuthRefreshInterceptor from 'axios-auth-refresh';
 import { ResponseCode } from '../types/consts';
 import { ApiResponse } from '../types/basic';
 
-const BASE_API_ORIGIN = 'http://localhost:8888/api/v2';
+const BASE_API_ORIGIN = 'https://www.yuanzhi.xyz/api/v2';
 
 const apiClient = axios.create({
   baseURL: BASE_API_ORIGIN,
