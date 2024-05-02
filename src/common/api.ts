@@ -9,16 +9,14 @@ import { RedisArrayData, RedisStringData } from './types/redis';
 import { LoginResponseData } from './types/login';
 import apiClient from './utils/apiClient';
 
-const NEED_AUTH_PREFIX = `/need-auth`;
-
-const TRANSLATION_PREFIX = `${NEED_AUTH_PREFIX}/translation`;
+const TRANSLATION_PREFIX = `/translation`;
 
 export const getUntranslatedWords = (
   page: number,
   page_size: number,
   search_key: string
 ): NewApiResponse<UnTranslateData> => {
-  return apiClient.get(`${TRANSLATION_PREFIX}/list`, {params: {
+  return apiClient.get(`${TRANSLATION_PREFIX}`, {params: {
     page,
     page_size,
     search_key,
@@ -30,19 +28,19 @@ export const submitTranslation = (
   origin: string,
   translation: string
 ): NewApiResponse => {
-  return apiClient.post(`${TRANSLATION_PREFIX}/update`, { origin, translation });
+  return apiClient.post(`${TRANSLATION_PREFIX}`, { origin, translation });
 };
 
-export const deleteTranslation = (word: string): NewApiResponse => {
-  return apiClient.post(`${TRANSLATION_PREFIX}/delete`, { word });
+export const deleteTranslation = (origin: string): NewApiResponse => {
+  return apiClient.delete(`${TRANSLATION_PREFIX}/delete`, { params: { origin } });
 };
 
-const IMAGE_STORE_PREFIX = `${NEED_AUTH_PREFIX}/image-store`;
+const IMAGE_STORE_PREFIX = `/image-store`;
 
 export const fetchImages = (
   filters: ListImageReq
 ): NewApiResponse<ListImageData> => {
-  return apiClient.post(`${IMAGE_STORE_PREFIX}/list-info`, filters);
+  return apiClient.get(`${IMAGE_STORE_PREFIX}`, {params: filters});
 };
 
 export const updateImagesStatus = (
@@ -51,22 +49,22 @@ export const updateImagesStatus = (
   return apiClient.post(`${IMAGE_STORE_PREFIX}/update-status`, filters);
 };
 
-const CONFIG_PREFIX = `${NEED_AUTH_PREFIX}/conf`;
+const CONFIG_PREFIX = `/setting`;
 
 export const getRedisValue = (key: string): NewApiResponse<RedisStringData> => {
-  return apiClient.get(`${CONFIG_PREFIX}/get-string-value`, {
+  return apiClient.get(`${CONFIG_PREFIX}`, {
     params: { key },
   });
 };
 
 export const setRedisValue = (key: string, value: string): NewApiResponse => {
-  return apiClient.post(`${CONFIG_PREFIX}/set-string-value`, { key, value });
+  return apiClient.post(`${CONFIG_PREFIX}`, { key, value });
 };
 
 export const getRedisMemberValue = (
   key: string
 ): NewApiResponse<RedisArrayData> => {
-  return apiClient.get(`${CONFIG_PREFIX}/get-member-value`, {
+  return apiClient.get(`${CONFIG_PREFIX}/array`, {
     params: { key },
   });
 };
@@ -75,7 +73,7 @@ export const setRedisMemberValue = (
   key: string,
   value: string[]
 ): NewApiResponse => {
-  return apiClient.post(`${CONFIG_PREFIX}/set-member-value`, { key, value });
+  return apiClient.post(`${CONFIG_PREFIX}/array`, { key, value });
 };
 
 const AUTH_PREFIX = `/auth`;

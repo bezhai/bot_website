@@ -10,8 +10,7 @@ export interface TranslateWord {
   extra_info: Extra | null;
 }
 
-export interface TranslateWithNum {
-  word: TranslateWord;
+export interface TranslateWithNum extends TranslateWord {
   num: number;
 }
 

@@ -3,12 +3,12 @@ export enum StatusMode {
   Visible = 1,
   Delete = 2,
   All = 3,
-  NoVisible = 4
+  NoVisible = 4,
 }
 
 export interface ListImageReq {
   author?: string;
-  author_id?: string; 
+  author_id?: string;
   page?: number;
   page_size?: number;
   tags?: string[];
@@ -42,20 +42,22 @@ export interface PixivImageInfo {
   title: string;
 }
 
-export interface PixivImageInfoWithUrl {
-  pixiv_image_meta_info: PixivImageInfo;
+export interface PixivImageInfoWithUrl extends PixivImageInfo {
   show_url: string;
   download_url: string;
 }
 
 export interface ListImageData {
-  pixiv_image_meta_infos: PixivImageInfoWithUrl[];
+  data: PixivImageInfoWithUrl[];
   total: number;
 }
 
-export type UpdateStatusMode = StatusMode.Delete | StatusMode.Visible | StatusMode.NoVisible;
+export type UpdateStatusMode =
+  | StatusMode.Delete
+  | StatusMode.Visible
+  | StatusMode.NoVisible;
 
 export interface UpdateImagesStatusReq {
-  pixiv_addr_list: string[];
+  pixiv_addr: string[];
   status: UpdateStatusMode;
 }

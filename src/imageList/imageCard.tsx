@@ -103,7 +103,7 @@ const ImageCard: React.FC<ImageCardProps> = ({
         <CardMedia
           className={classes.cardMedia}
           image={imageInfo.show_url}
-          title={imageInfo.pixiv_image_meta_info.title}
+          title={imageInfo.title}
           onClick={handleImageClick}
         />
         <Grid container alignItems="center">
@@ -127,13 +127,13 @@ const ImageCard: React.FC<ImageCardProps> = ({
                 component="h4"
                 style={{ fontWeight: "bold" }}
               >
-                {imageInfo.pixiv_image_meta_info.title || "无题"}
+                {imageInfo.title || "无题"}
               </Typography>
               <Typography variant="body2" color="textSecondary" component="p">
-                {imageInfo.pixiv_image_meta_info.author}
+                {imageInfo.author}
               </Typography>
               <CopyableText 
-              text={imageInfo.pixiv_image_meta_info.pixiv_addr}
+              text={imageInfo.pixiv_addr}
               variant="body2" 
               color="textSecondary" 
               component="p" />

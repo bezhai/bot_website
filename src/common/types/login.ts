@@ -1,4 +1,4 @@
 export interface LoginResponseData {
-    token: string;
-    expire: string;
+    access_token: string;
+    refresh_token: string;
 }

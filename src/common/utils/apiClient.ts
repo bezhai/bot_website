@@ -3,25 +3,23 @@ import createAuthRefreshInterceptor from 'axios-auth-refresh';
 import { ResponseCode } from '../types/consts';
 import { ApiResponse } from '../types/basic';
 
-const BASE_API_ORIGIN = 'https://www.yuanzhi.xyz/api';
+const BASE_API_ORIGIN = 'http://localhost:8888/api/v2';
 
 const apiClient = axios.create({
   baseURL: BASE_API_ORIGIN,
 });
 
 const refreshAuthLogic = (failedRequest: any) => {
+  const refresh_token = localStorage.getItem('refresh_token');
   return axios
-    .get(`${BASE_API_ORIGIN}/auth/refresh`, {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem('token')}`,
-        // 你可以在这里添加更多的自定义头部
-      },
+    .post(`${BASE_API_ORIGIN}/auth/refresh`, {
+      refresh_token,
     })
     .then((tokenRefreshResponse) => {
-      const { token } = tokenRefreshResponse.data.data;
-      localStorage.setItem('token', token);
+      const { access_token } = tokenRefreshResponse.data.data;
+      localStorage.setItem('access_token', access_token);
       failedRequest.response.config.headers['Authorization'] =
-        'Bearer ' + token;
+        'Bearer ' + access_token;
       return Promise.resolve();
     });
 };
@@ -37,10 +35,10 @@ createAuthRefreshInterceptor(apiClient, refreshAuthLogic, {
 // 设置请求拦截器以确保每个请求都发送当前的 token
 apiClient.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem('token');
-    if (token) {
+    const access_token = localStorage.getItem('access_token');
+    if (access_token) {
       config.headers = config.headers || {};
-      config.headers.Authorization = `Bearer ${token}`;
+      config.headers.Authorization = `Bearer ${access_token}`;
     }
     return config;
   },

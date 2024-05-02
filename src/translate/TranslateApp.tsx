@@ -53,13 +53,13 @@ function TranslationApp() {
           setTranslations(
             resp_data.data.map((item) => ({
               word: {
-                origin: item.word.origin,
+                origin: item.origin,
                 extra_info: {
-                  zh: item.word.extra_info?.zh,
-                  en: item.word.extra_info?.en,
+                  zh: item.extra_info?.zh,
+                  en: item.extra_info?.en,
                 },
               },
-              translation: item.word.translation || item.word.extra_info?.zh || item.word.extra_info?.en || "",
+              translation: item.translation || item.extra_info?.zh || item.extra_info?.en || "",
               num: item.num,
             }))
           );

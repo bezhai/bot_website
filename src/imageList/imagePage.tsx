@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { Container, Grid, Box } from "@mui/material";
+import React, { useState, useEffect } from 'react';
+import { Container, Grid, Box } from '@mui/material';
 import {
   ListImageData,
   ListImageReq,
@@ -7,25 +7,25 @@ import {
   StatusMode,
   UpdateImagesStatusReq,
   UpdateStatusMode,
-} from "../common/types/image";
-import { fetchImages, updateImagesStatus } from "../common/api";
-import TopTabs from "../common/components/TopTabs";
-import PaginationBar from "../common/components/PaginationBar";
-import ImageCard from "./imageCard";
-import imagePageLogo from "../assets/logo/image-page-logo.svg";
-import useDocumentTitleAndIcon from "../common/utils/titleLogoConf";
-import SearchComponent from "./SearchComponent";
-import ControlPanel from "./ControlPanel";
-import { StringBooleanMap } from "../common/types/basic";
-import { deleteKey } from "../common/utils/tools";
-import ImageDetailCard from "./ImageDetailCard";
-import { useAtom } from "jotai";
-import { showMessageAtom } from "../common/snackBar/snackbarAtoms";
-import styles from "./ImagePage.module.css";
+} from '../common/types/image';
+import { fetchImages, updateImagesStatus } from '../common/api';
+import TopTabs from '../common/components/TopTabs';
+import PaginationBar from '../common/components/PaginationBar';
+import ImageCard from './imageCard';
+import imagePageLogo from '../assets/logo/image-page-logo.svg';
+import useDocumentTitleAndIcon from '../common/utils/titleLogoConf';
+import SearchComponent from './SearchComponent';
+import ControlPanel from './ControlPanel';
+import { StringBooleanMap } from '../common/types/basic';
+import { deleteKey } from '../common/utils/tools';
+import ImageDetailCard from './ImageDetailCard';
+import { useAtom } from 'jotai';
+import { showMessageAtom } from '../common/snackBar/snackbarAtoms';
+import styles from './ImagePage.module.css';
 
 const ImagesPage: React.FC = () => {
   const [imagesData, setImagesData] = useState<ListImageData>({
-    pixiv_image_meta_infos: [],
+    data: [],
     total: 0,
   });
   const [page, setPage] = useState<number>(1);
@@ -48,7 +48,7 @@ const ImagesPage: React.FC = () => {
     setSelectedImage(null);
   };
 
-  useDocumentTitleAndIcon("图库", imagePageLogo);
+  useDocumentTitleAndIcon('图库', imagePageLogo);
 
   useEffect(() => {
     const fetchImagesData = async () => {
@@ -66,12 +66,12 @@ const ImagesPage: React.FC = () => {
           response.data.code !== 0 ||
           !response.data.data
         ) {
-          console.error("Failed to fetch images:", response.data);
+          console.error('Failed to fetch images:', response.data);
           return;
         }
         setImagesData(response.data.data);
       } catch (error) {
-        console.error("Error fetching images:", error);
+        console.error('Error fetching images:', error);
       }
     };
     fetchImagesData();
@@ -94,22 +94,22 @@ const ImagesPage: React.FC = () => {
   ): Promise<void> => {
     try {
       const response = await updateImagesStatus(filters);
-      const image_len = filters.pixiv_addr_list.length;
+      const image_len = filters.pixiv_addr.length;
       const message = {
         [StatusMode.Visible]: `设置${image_len}张图片可见`,
         [StatusMode.NoVisible]: `隐藏${image_len}张图片`,
         [StatusMode.Delete]: `删除${image_len}张图片`,
       }[filters.status];
       if (response.status !== 200 || response.data.code !== 0) {
-        console.error("Failed to update images status:", response.data);
-        showMessage({ message: "更新图片状态失败", severity: "error" });
+        console.error('Failed to update images status:', response.data);
+        showMessage({ message: '更新图片状态失败', severity: 'error' });
       } else {
-        showMessage({ message: `成功${message}`, severity: "success" });
+        showMessage({ message: `成功${message}`, severity: 'success' });
         setSelectImages({});
         updateSearchTrigger();
       }
     } catch (error) {
-      console.error("Error updating images status:", error);
+      console.error('Error updating images status:', error);
     }
   };
 
@@ -136,24 +136,24 @@ const ImagesPage: React.FC = () => {
           updateStatus={(status: UpdateStatusMode) => setCurrentStatus(status)}
           submit={() =>
             updateImagesStatusFunc({
-              pixiv_addr_list: Object.keys(selectImages),
+              pixiv_addr: Object.keys(selectImages),
               status: currentStatus,
             })
           }
           hasSelectedItem={Object.keys(selectImages).length > 0}
         />
         <Grid container spacing={4}>
-          {imagesData.pixiv_image_meta_infos.map((imageInfo) => (
-            <Grid item key={imageInfo.pixiv_image_meta_info.pixiv_addr} xs={12} sm={6} md={3}>
+          {imagesData.data.map((imageInfo) => (
+            <Grid item key={imageInfo.pixiv_addr} xs={12} sm={6} md={3}>
               <ImageCard
                 onImageClick={(imageInfo: PixivImageInfoWithUrl) => {
                   handleImageClick(imageInfo);
                 }}
                 onCheckboxChange={(checked: boolean) => {
-                  handleSelectImages(imageInfo.pixiv_image_meta_info.pixiv_addr, checked);
+                  handleSelectImages(imageInfo.pixiv_addr, checked);
                 }}
                 isOpenCheckbox={isOpenCheckbox}
-                isChecked={selectImages.hasOwnProperty(imageInfo.pixiv_image_meta_info.pixiv_addr)}
+                isChecked={selectImages.hasOwnProperty(imageInfo.pixiv_addr)}
                 {...imageInfo}
               />
             </Grid>
