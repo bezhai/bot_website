@@ -16,7 +16,7 @@ export const getUntranslatedWords = (
   page_size: number,
   search_key: string
 ): NewApiResponse<UnTranslateData> => {
-  return apiClient.get(`${TRANSLATION_PREFIX}`, {params: {
+  return apiClient.get(TRANSLATION_PREFIX, {params: {
     page,
     page_size,
     search_key,
@@ -28,11 +28,11 @@ export const submitTranslation = (
   origin: string,
   translation: string
 ): NewApiResponse => {
-  return apiClient.post(`${TRANSLATION_PREFIX}`, { origin, translation });
+  return apiClient.post(TRANSLATION_PREFIX, { origin, translation });
 };
 
 export const deleteTranslation = (origin: string): NewApiResponse => {
-  return apiClient.delete(`${TRANSLATION_PREFIX}/delete`, { params: { origin } });
+  return apiClient.delete(TRANSLATION_PREFIX, { params: { origin } });
 };
 
 const IMAGE_STORE_PREFIX = `/image-store`;
